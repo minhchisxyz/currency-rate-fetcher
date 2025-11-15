@@ -32,12 +32,15 @@ public class CurrencyRateService {
     public CurrencyRates getRates() {
         float vibRate = 0;
         float vcbRate = 0;
+        // Java
+        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--no-sandbox");
-        options.addArguments("--headless=new");
-        options.addArguments("--disable-dev-shm-usage");
+        options.setBinary("/usr/bin/chromium");
+        options.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage",
+                "--disable-gpu", "--remote-allow-origins=*", "--single-process");
         options.setImplicitWaitTimeout(Duration.ofSeconds(10));
         WebDriver driver = new ChromeDriver(options);
+
         // VIB
         try {
             driver.get(vibUrl);

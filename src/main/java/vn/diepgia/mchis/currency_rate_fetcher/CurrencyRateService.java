@@ -34,6 +34,8 @@ public class CurrencyRateService {
         float vcbRate = 0;
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox");
+        options.addArguments("--headless=new");
+        options.addArguments("--disable-dev-shm-usage");
         options.setImplicitWaitTimeout(Duration.ofSeconds(10));
         WebDriver driver = new ChromeDriver(options);
         // VIB

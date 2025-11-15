@@ -32,15 +32,8 @@ public class CurrencyRateService {
         WebDriver driver = null;
 
         try {
-            // VIB
             driver = WebDriverFactory.create();
-            driver.get(vibUrl);
-            List<WebElement> elements = driver.findElements(By.className("vib-v2-colum-table-deposit"));
-            WebElement element = elements.get(19);
-            String value = element.getText();
-            value = value.replace(".", "").replace(",", ".");
-            vibRate = Float.parseFloat(value);
-
+            // VCB
             driver.get(vcbUrl);
             String xml = driver.getPageSource();
             String currencyCode = "EUR";
@@ -68,6 +61,15 @@ public class CurrencyRateService {
                     break;
                 }
             }
+
+            // VIB
+            driver.get(vibUrl);
+            List<WebElement> elements = driver.findElements(By.className("vib-v2-colum-table-deposit"));
+            WebElement element = elements.get(19);
+            String value = element.getText();
+            value = value.replace(".", "").replace(",", ".");
+            vibRate = Float.parseFloat(value);
+
         } catch (Exception e) {
             LOGGER.severe("Cannot retrieve rates: " + e.getMessage());
         }

@@ -1,3 +1,8 @@
 spring:
   application:
     name: currency_rate_fetcher
+
+application:
+  currency:
+    vib-url: https://www.vib.com.vn/en/ty-gia/bang-ty-gia
+    vcb-url: https://portal.vietcombank.com.vn/Usercontrols/TVPortal.TyGia/pXML.aspx

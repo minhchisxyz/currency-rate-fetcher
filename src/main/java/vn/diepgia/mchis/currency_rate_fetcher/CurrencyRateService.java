@@ -3,8 +3,6 @@ package vn.diepgia.mchis.currency_rate_fetcher;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -15,7 +13,6 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
-import java.time.Duration;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -32,28 +29,18 @@ public class CurrencyRateService {
     public CurrencyRates getRates() {
         float vibRate = 0;
         float vcbRate = 0;
-        // Java
-        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
-        ChromeOptions options = new ChromeOptions();
-        options.setBinary("/usr/bin/chromium");
-        options.addArguments("--headless=new", "--no-sandbox", "--disable-dev-shm-usage",
-                "--disable-gpu", "--remote-allow-origins=*", "--single-process");
-        options.setImplicitWaitTimeout(Duration.ofSeconds(10));
-        WebDriver driver = new ChromeDriver(options);
+        WebDriver driver = null;
 
-        // VIB
         try {
+            // VIB
+            driver = WebDriverFactory.create();
             driver.get(vibUrl);
             List<WebElement> elements = driver.findElements(By.className("vib-v2-colum-table-deposit"));
             WebElement element = elements.get(19);
             String value = element.getText();
             value = value.replace(".", "").replace(",", ".");
             vibRate = Float.parseFloat(value);
-        } catch (Exception e) {
-            LOGGER.severe("Cannot retrieve rate for VIB" + ", exception: " + e.getMessage());
-        }
-        // VCB
-        try {
+
             driver.get(vcbUrl);
             String xml = driver.getPageSource();
             String currencyCode = "EUR";
@@ -82,9 +69,12 @@ public class CurrencyRateService {
                 }
             }
         } catch (Exception e) {
-            LOGGER.severe("Cannot retrieve rate for VCB" + ", exception: " + e.getMessage());
-        } finally {
-            driver.quit();
+            LOGGER.severe("Cannot retrieve rates: " + e.getMessage());
+        }
+        finally {
+            if (driver != null) {
+                driver.quit();
+            }
         }
         return CurrencyRates.builder().vibRate(vibRate).vcbRate(vcbRate).build();
     }
